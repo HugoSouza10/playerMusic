@@ -11,45 +11,111 @@ let btnRepeat = document.querySelector('.controll #repeat');
 let html = document.querySelector('html'); //Selecionando o html para Modificar o mode
 let darkMode = true;
 let currentMusic = 0; //Aqui serve para a gente saber em qual música está
-
+let pause = true;
+//Selecionamos a tag audio
+let musicAudio = document.querySelector('#musicPlay');
 
 
 
 //Criando função para iniciar a música no momento do carregamento
 function startMusic(){
-       let musicPlaying = playList[currentMusic];
-       console.log('Inicializando!');
+      
+       //Verificando se existe alguma música para rederizar
+       if(currentMusic != -1){
+              let musicPlaying = toPullMusic(currentMusic);
 
+              //Rederizando html
+              legend_music.querySelector('h4').innerHTML = musicPlaying.nameMusic;
+              legend_music.querySelector('h5').innerHTML = musicPlaying.author;
+              moldeCover.querySelector('img').setAttribute('src', `${musicPlaying.photo[0].url}`); 
 
-       //Rederizando html
-       legend_music.querySelector('h4').innerHTML = musicPlaying.nameMusic;
-       legend_music.querySelector('h5').innerHTML = musicPlaying.author;
-       moldeCover.querySelector('img').setAttribute('src', `${musicPlaying.photo[0].url}`);
+       }
 
+      
 }
 
 startMusic();
 
 
-//Criando eventos de click em todos os botões.
-btnRadom.addEventListener('click',()=>{
-       console.log('Radonico');
-});
+//Função para retornar a música que está procurando
+function toPullMusic(current){
+       return playList[current];
+}
 
 
-btnPrevbtn.addEventListener('click',()=>{
-       console.log('Anterior');
-});
 
 
+//Adicionando evento de play
 btnPlaypausebtn.addEventListener('click',()=>{
-       console.log('Play');
+
+        //Verificando se a música está pausada ou não
+        if(pause){
+              playMusic();
+              document.querySelector('#playpausebtn img').src = './img/pause.png'; //Trocando ícone de play para pause
+              console.log("Play");
+              pause = false;
+              
+       }else{
+              playMusic();
+              document.querySelector('#playpausebtn img').src = './img/play-icone.png';
+              musicAudio.pause();
+              pause = true;
+       }
+
 });
 
 
+//Função para tocar a música
+function playMusic(){
+       musicAudio.src = `${playList[currentMusic].music[0].url}`;
+       musicAudio.play();
+       
+}
+
+  
+
+
+
+//Voltar música
+btnPrevbtn.addEventListener('click',()=>{
+
+        //Verificando se está na primeiro música, caso volte, então voltaremos para ultima
+        if(currentMusic === 0){
+              currentMusic = playList.length-1; //Pegando a ultima música da playList
+              startMusic();
+              playMusic();
+              document.querySelector('#playpausebtn img').src = './img/pause.png'; //Trocando ícone de play para pause
+        }else{
+              currentMusic = currentMusic-1; 
+              startMusic();
+              playMusic();
+              document.querySelector('#playpausebtn img').src = './img/pause.png'; //Trocando ícone de play para pause
+        }
+      
+      
+});
+
+
+//Função próxima música
 btnNextbtn.addEventListener('click',()=>{
-       console.log('Próximo');
+
+       //Verificamos se estamos na ultima música. Caso esteja, voltamos para a primeira
+       if(currentMusic === playList.length-1){
+              currentMusic = 0;
+              startMusic();
+              playMusic();
+              document.querySelector('#playpausebtn img').src = './img/pause.png'; //Trocando ícone de play para pause
+        }else{
+              currentMusic++; 
+              startMusic();
+              playMusic();
+              document.querySelector('#playpausebtn img').src = './img/pause.png'; //Trocando ícone de play para pause
+        }
+
 });
+
+
+//Função repetir
 
 btnRepeat.addEventListener('click',()=>{
        console.log('Repetir');
@@ -72,6 +138,7 @@ const themes = {
          background: 'black',
          text: '#9c9c9c',
          colorShadow: 'none',
+         
        }
 };
 
@@ -110,17 +177,6 @@ btn_mode.addEventListener('click',()=>{
 
 
 
-
-/*FUNÇÃO DARK MODE
-
-https://evertonstrack.com.br/como-implementar-dark-mode/
-
-
-O QUE APRENDEMOS?
-
-setProperty: sERVE PARA SETAR UMA PROPRIEDADE CSS
-
-*/
 
 
 
